@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#ea1d2c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SaborExpress">
+  <title>SaborExpress Pro — Delivery</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ea1d2c;
+      --primary-dark: #c81421;
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --surface-2: #f0f2f5;
+      --text: #18181b;
+      --text-muted: #71717a;
+      --border: #e4e4e7;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      --radius: 16px;
+    }
+
+    body.dark {
+      --bg: #0f1115;
+      --surface: #181b21;
+      --surface-2: #232730;
+      --text: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --border: #2e333d;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 95px; transition: background 0.25s, color 0.25s; }
+    
+    /* Header & Banner Instalação */
+    .install-banner { background: linear-gradient(90deg, #18181b, #27272a); color: #fff; padding: 10px 16px; display: none; justify-content: space-between; align-items: center; font-size: 13px; }
+    .install-banner.show { display: flex; }
+    .install-banner button { background: var(--primary); color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 12px; }
+
+    header { position: sticky; top: 0; z-index: 40; background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 16px; }
+    .header-top { max-width: 960px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .address-btn { display: flex; align-items: center; gap: 8px; background: var(--surface-2); border: none; padding: 8px 12px; border-radius: 12px; color: var(--text); cursor: pointer; text-align: left; max-width: 240px; }
+    .address-btn span { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+    .address-btn small { font-size: 10px; color: var(--text-muted); display: block; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn { background: var(--surface-2); border: none; width: 38px; height: 38px; border-radius: 12px; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; position: relative; }
+    .points-pill { background: rgba(245, 158, 11, 0.15); color: #d97706; font-weight: 800; font-size: 12px; padding: 6px 10px; border-radius: 20px; cursor: pointer; }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 16px; }
+
+    /* Search */
+    .search-box { position: relative; margin-bottom: 16px; }
+    .search-box input { width: 100%; padding: 13px 16px 13px 42px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 14px; outline: none; }
+    .search-box input:focus { border-color: var(--primary); }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+    /* Hero Carousel */
+    .promo-scroll { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin-bottom: 18px; }
+    .promo-scroll::-webkit-scrollbar { display: none; }
+    .promo-card { min-width: 270px; border-radius: var(--radius); padding: 18px; color: white; position: relative; overflow: hidden; flex-shrink: 0; cursor: pointer; }
+    .promo-1 { background: linear-gradient(135deg, #ea1d2c, #ff6b35); }
+    .promo-2 { background: linear-gradient(135deg, #1e293b, #334155); }
+    .promo-3 { background: linear-gradient(135deg, #059669, #10b981); }
+    .promo-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+    .promo-card p { font-size: 12px; opacity: 0.9; margin-bottom: 10px; }
+    .promo-badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; }
+
+    /* Categories */
+    .cats { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 18px; }
+    .cats::-webkit-scrollbar { display: none; }
+    .cat-pill { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 9px 16px; border-radius: 24px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+    .cat-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* Products Grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+    .card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow); transition: transform 0.2s; position: relative; }
+    .card:hover { transform: translateY(-2px); }
+    .card.paused { opacity: 0.55; pointer-events: none; }
+    .card-img { width: 100%; height: 155px; object-fit: cover; background: var(--surface-2); }
+    .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .tag-badge { position: absolute; top: 10px; left: 10px; background: var(--primary); color: white; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 8px; }
+    .card-body { padding: 14px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; }
+    .price-box .old-price { font-size: 11px; text-decoration: line-through; color: var(--text-muted); display: block; }
+    .price-box .price { font-size: 16px; font-weight: 800; color: var(--success); }
+    .add-btn { background: var(--primary); color: white; border: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; }
+
+    /* Bottom Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0 12px; z-index: 45; }
+    .nav-item { background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .nav-item.active { color: var(--primary); }
+    .nav-item span.ico { font-size: 20px; }
+
+    /* Floating Cart Bar */
+    .floating-cart { position: fixed; bottom: 68px; left: 16px; right: 16px; max-width: 928px; margin: 0 auto; background: var(--primary); color: white; padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 25px rgba(234, 29, 44, 0.35); cursor: pointer; z-index: 42; }
+    .floating-cart.hidden { display: none; }
+
+    /* Modals & Drawers */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 60; display: flex; align-items: flex-end; justify-content: center; backdrop-filter: blur(2px); }
+    .overlay.hidden { display: none; }
+    .sheet { background: var(--surface); width: 100%; max-width: 560px; max-height: 90vh; border-radius: 22px 22px 0 0; padding: 20px; overflow-y: auto; animation: slideUp 0.25s ease; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .close-btn { background: var(--surface-2); border: none; width: 32px; height: 32px; border-radius: 50%; color: var(--text); font-weight: bold; cursor: pointer; }
+
+    /* Customization Options */
+    .opt-group { margin-bottom: 16px; }
+    .opt-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .opt-req { background: var(--surface-2); font-size: 11px; padding: 2px 8px; border-radius: 6px; }
+    .opt-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .qty-ctrl { display: flex; align-items: center; gap: 10px; background: var(--surface-2); padding: 4px 10px; border-radius: 10px; }
+    .qty-ctrl button { background: none; border: none; color: var(--primary); font-weight: 800; font-size: 16px; cursor: pointer; width: 22px; }
+
+    /* Checkout & Progress */
+    .free-ship-bar { background: var(--surface-2); padding: 10px 12px; border-radius: 12px; margin-bottom: 14px; font-size: 12px; }
+    .progress-track { height: 6px; background: var(--border); border-radius: 6px; margin-top: 6px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--success); transition: width 0.3s; }
+    .form-input { width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); font-size: 13px; margin-bottom: 10px; }
+    .summary-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; color: var(--text-muted); }
+    .summary-total { display: flex; justify-content: space-between; font-size: 17px; font-weight: 800; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .primary-cta { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 12px; }
+
+    /* Views */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Tracking & Admin */
+    .track-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
+    .step-list { display: flex; justify-content: space-between; margin: 16px 0; position: relative; }
+    .step { text-align: center; flex: 1; font-size: 11px; color: var(--text-muted); }
+    .step.done { color: var(--success); font-weight: 700; }
+    .step-dot { width: 24px; height: 24px; border-radius: 50%; background: var(--surface-2); margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; }
+    .step.done .step-dot { background: var(--success); color: white; }
+
+    /* Toast */
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #18181b; color: white; padding: 10px 18px; border-radius: 24px; font-size: 13px; font-weight: 600; z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; }
+    .toast.show { opacity: 1; top: 30px; }
+  </style>
+</head>
+<body>
+
+  <!-- Banner de Instalação PWA (aparece automaticamente no Chrome) -->
+  <div class="install-banner" id="install-banner">
+    <span>📲 Instale o <strong>SaborExpress</strong> no seu dispositivo!</span>
+    <button id="btn-install-pwa">Instalar App</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <header>
+    <div class="header-top">
+      <button class="address-btn" onclick="openAddressModal()">
+        <span>📍</span>
+        <div>
+          <small>Entregar em</small>
+          <span id="current-address">Centro • Taxa R$ 5,00</span>
+        </div>
+      </button>
+      <div class="header-actions">
+        <div class="points-pill" onclick="switchTab('loyalty')">⭐ <span id="user-points">150</span> pts</div>
+        <button class="icon-btn" onclick="toggleTheme()" title="Alternar Tema">🌓</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ABA 1: INÍCIO / CARDÁPIO -->
+    <section id="view-home" class="view active">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Buscar hambúrguer, pizza, bebida..." oninput="renderMenu()">
+      </div>
+
+      <div class="promo-scroll">
+        <div class="promo-card promo-1" onclick="applyQuickCoupon('BEMVINDO15')">
+          <span class="promo-badge">CUPOM: BEMVINDO15</span>
+          <h3>15% OFF no Pedido</h3>
+          <p>Toque para copiar e aplicar na sacola</p>
+        </div>
+        <div class="promo-card promo-2" onclick="applyQuickCoupon('FRETEGRATIS')">
+          <span class="promo-badge">CUPOM: FRETEGRATIS</span>
+          <h3>Entrega Grátis Hoje</h3>
+          <p>Válido para qualquer região</p>
+        </div>
+        <div class="promo-card promo-3" onclick="switchTab('loyalty')">
+          <span class="promo-badge">CLUBE VIP</span>
+          <h3>Ganhe Cashback</h3>
+          <p>1 ponto a cada R$ 1 gasto</p>
+        </div>
+      </div>
+
+      <div class="cats" id="categories-bar"></div>
+      <div class="grid" id="products-grid"></div>
+    </section>
+
+    <!-- ABA 2: PEDIDOS & RASTREAMENTO -->
+    <section id="view-orders" class="view">
+      <h2 style="margin-bottom:14px;">📦 Meus Pedidos</h2>
+      <div id="orders-list"></div>
+    </section>
+
+    <!-- ABA 3: FAVORITOS -->
+    <section id="view-favs" class="view">
+      <h2 style="margin-bottom:14px;">❤️ Seus Favoritos</h2>
+      <div class="grid" id="favs-grid"></div>
+    </section>
+
+    <!-- ABA 4: FIDELIDADE -->
+    <section id="view-loyalty" class="view">
+      <div class="track-card" style="background:linear-gradient(135deg,#f59e0b,#d97706); color:white;">
+        <small>SALDO DISPONÍVEL</small>
+        <h1 style="font-size:32px; margin:6px 0;"><span id="loyalty-pts-big">150</span> pontos</h1>
+        <p style="font-size:13px; opacity:0.95;">100 pontos = R$ 10,00 de desconto direto no checkout!</p>
+      </div>
+      <div class="track-card">
+        <h3 style="margin-bottom:8px;">Como ganhar mais pontos?</h3>
+        <p style="font-size:13px; color:var(--text-muted); line-height:1.6;">
+          • Cada R$ 1,00 em pedidos = <strong>+1 ponto</strong><br>
+          • Avaliar um pedido entregue = <strong>+30 pontos bônus</strong><br>
+          • Resgate seus pontos diretamente ao finalizar a compra na sacola.
+        </p>
+      </div>
+    </section>
+
+    <!-- ABA 5: PAINEL ADMIN (LOJISTA) -->
+    <section id="view-admin" class="view">
+      <h2 style="margin-bottom:14px;">⚙️ Painel do Lojista</h2>
+      <div class="track-card">
+        <h3 style="margin-bottom:10px;">Cadastrar Novo Produto</h3>
+        <input type="text" id="adm-name" class="form-input" placeholder="Nome do prato">
+        <input type="text" id="adm-desc" class="form-input" placeholder="Descrição detalhada">
+        <div style="display:flex; gap:8px;">
+          <input type="number" id="adm-price" class="form-input" placeholder="Preço (ex: 32.90)">
+          <select id="adm-cat" class="form-input">
+            <option value="Burgers">Burgers</option>
+            <option value="Pizzas">Pizzas</option>
+            <option value="Bebidas">Bebidas</option>
+            <option value="Sobremesas">Sobremesas</option>
+          </select>
+        </div>
+        <button class="primary-cta" onclick="adminAddProduct()">+ Adicionar ao Cardápio</button>
+      </div>
+      <h3 style="margin:16px 0 10px;">Controle de Estoque (Pausar/Ativar)</h3>
+      <div id="admin-products-list"></div>
+    </section>
+  </main>
+
+  <!-- Barra Flutuante da Sacola -->
+  <div class="floating-cart hidden" id="floating-cart" onclick="openCartModal()">
+    <div>
+      <strong id="float-count">0 itens</strong>
+      <small style="display:block; opacity:0.9;">Ver sacola e finalizar</small>
+    </div>
+    <strong style="font-size:16px;" id="float-total">R$ 0,00</strong>
+  </div>
+
+  <!-- Navegação Inferior -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="switchTab('home')" id="nav-home"><span class="ico">🏠</span>Início</button>
+    <button class="nav-item" onclick="switchTab('orders')" id="nav-orders"><span class="ico">🧾</span>Pedidos</button>
+    <button class="nav-item" onclick="switchTab('favs')" id="nav-favs"><span class="ico">❤️</span>Favoritos</button>
+    <button class="nav-item" onclick="switchTab('loyalty')" id="nav-loyalty"><span class="ico">⭐</span>Clube</button>
+    <button class="nav-item" onclick="switchTab('admin')" id="nav-admin"><span class="ico">⚙️</span>Lojista</button>
+  </nav>
+
+  <!-- MODAL: PERSONALIZAR PRODUTO -->
+  <div class="overlay hidden" id="product-modal">
+    <div class="sheet">
+      <div class="sheet-header">
+        <h3 id="pm-title">Produto</h3>
+        <button class="close-btn" onclick="closeModal('product-modal')">✕</button>
+      </div>
+      <p id="pm-desc" style="font-size:13px; color:var(--text-muted); margin-bottom:14px;"></p>
+
+      <div class="opt-group">
+        <div class="opt-title"><span>Preparo / Tamanho</span><span class="opt-req">Obrigatório</span></div>
+        <label class="opt-row"><span>Padrão da Casa</span><input type="radio" name="pm-prep" value="Padrão da Casa" checked></label>
+        <label class="opt-row"><span>Bem Passado / Massa Fina</span><input type="radio" name="pm-prep" value="Bem Passado / Massa Fina"></label>
+      </div>
+
+      <div class="opt-group">
+        <div class="opt-title"><span>Adicionais Extras</span><span class="opt-req">Opcional</span></div>
+        <div id="pm-addons"></div>
+      </div>
+
+      <textarea id="pm-obs" class="form-input" rows="2" placeholder="Alguma observação? Ex: Tirar cebola, maionese à parte..."></textarea>
+
+      <div style="display:flex; gap:12px; align-items:center; margin-top:10px;">
+        <div class="qty-ctrl" style="padding:10px 14px;">
+          <button onclick="changePmQty(-1)">-</button>
+          <span id="pm-qty" style="font-weight:800;">1</span>
+          <button onclick="changePmQty(1)">+</button>
+        </div>
+        <button class="primary-cta" style="margin-top:0;" onclick="confirmAddToCart()">
+          Adicionar • <span id="pm-total">R$ 0,00</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SACOLA E CHECKOUT -->
+  <div class="overlay hidden" id="cart-modal">
+    <div class="sheet">
+      <div class="sheet-header">
+        <h3>🛍️ Sua Sacola</h3>
+        <button class="close-btn" onclick="closeModal('cart-modal')">✕</button>
+      </div>
+
+      <div class="free-ship-bar">
+        <span id="free-ship-text">Faltam R$ 60,00 para Frete Grátis</span>
+        <div class="progress-track"><div class="progress-fill" id="free-ship-fill" style="width:0%"></div></div>
+      </div>
+
+      <div id="cart-items-list"></div>
+
+      <div style="display:flex; gap:8px; margin:12px 0;">
+        <input type="text" id="coupon-input" class="form-input" style="margin:0;" placeholder="Cupom (BEMVINDO15 ou FRETEGRATIS)">
+        <button onclick="applyCouponInput()" style="background:var(--text); color:var(--surface); border:none; padding:0 16px; border-radius:10px; font-weight:700; cursor:pointer;">Aplicar</button>
+      </div>
+
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:12px; cursor:pointer;">
+        <input type="checkbox" id="use-points-chk" onchange="renderCart()">
+        <span>Usar meus pontos VIP (<span id="chk-pts-avail">150</span> pts = R$ <span id="chk-pts-val">15,00</span> de desconto)</span>
+      </label>
+
+      <select id="payment-method" class="form-input" onchange="togglePaymentExtra()">
+        <option value="Pix">💠 Pix (Aprovação imediata)</option>
+        <option value="Cartão de Crédito">💳 Cartão de Crédito na Entrega</option>
+        <option value="Dinheiro">💵 Dinheiro</option>
+      </select>
+
+      <div id="pix-box" style="background:var(--surface-2); padding:12px; border-radius:10px; text-align:center; margin-bottom:10px;">
+        <small style="display:block; margin-bottom:6px;">Chave Pix CNPJ: <strong>12.345.678/0001-99</strong></small>
+        <button type="button" onclick="copyPix()" style="background:var(--success); color:white; border:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">Copiar Chave Pix</button>
+      </div>
+
+      <div id="change-box" style="display:none;">
+        <input type="number" id="cash-change" class="form-input" placeholder="Troco para quanto? (Ex: 100)">
+      </div>
+
+      <div id="cart-summary"></div>
+
+      <button class="primary-cta" onclick="placeOrder()">Confirmar Pedido</button>
+      <button class="primary-cta" style="background:#25d366; margin-top:8px;" onclick="sendWhatsApp()">📲 Enviar Pedido via WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- MODAL: ENDEREÇOS -->
+  <div class="overlay hidden" id="address-modal">
+    <div class="sheet">
+      <div class="sheet-header">
+        <h3>📍 Endereço de Entrega</h3>
+        <button class="close-btn" onclick="closeModal('address-modal')">✕</button>
+      </div>
+      <select id="region-select" class="form-input">
+        <option value="Centro|5">Centro — Taxa R$ 5,00 (20-30 min)</option>
+        <option value="Zona Sul|8">Zona Sul — Taxa R$ 8,00 (30-45 min)</option>
+        <option value="Zona Norte|10">Zona Norte — Taxa R$ 10,00 (35-50 min)</option>
+      </select>
+      <input type="text" id="street-input" class="form-input" placeholder="Rua, Número e Complemento" value="Av. Paulista, 1000 - Apto 42">
+      <button class="primary-cta" onclick="saveAddress()">Salvar Endereço</button>
+    </div>
+  </div>
+
+  <script>
+    // ================= 1. REGISTRO PWA & BOTÃO INSTALAR =================
+    let deferredPrompt;
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('PWA Service Worker ativo:', reg.scope))
+          .catch(err => console.error('Erro SW:', err));
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('install-banner').classList.add('show');
+    });
+
+    document.getElementById('btn-install-pwa').addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        document.getElementById('install-banner').classList.remove('show');
+      }
+      deferredPrompt = null;
+    });
+
+    // ================= 2. DADOS E ESTADO DA APLICAÇÃO =================
+    const defaultProducts = [
+      { id: 1, name: "Smash Duplo Bacon", desc: "Dois blends 100g prensados na chapa, cheddar inglês, bacon crocante e molho especial.", price: 32.90, oldPrice: 38.90, cat: "Burgers", tag: "Mais Vendido", paused: false, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80" },
+      { id: 2, name: "Truffle Burger Artesanal", desc: "Blend 180g, queijo brie empanado, cebola caramelizada e maionese trufada no pão brioche.", price: 39.90, oldPrice: null, cat: "Burgers", tag: "Chef", paused: false, img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=600&q=80" },
+      { id: 3, name: "Pizza Margherita Napoletana", desc: "Massa de fermentação natural 48h, molho de tomate pelati, mozzarella de búfala e manjericão.", price: 49.90, oldPrice: 56.00, cat: "Pizzas", tag: "10% OFF", paused: false, img: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&q=80" },
+      { id: 4, name: "Pizza Pepperoni & Mel Picante", desc: "Mozzarella fior di latte, pepperoni artesanal crocante e finalização com mel apimentado.", price: 54.90, oldPrice: null, cat: "Pizzas", tag: "Novidade", paused: false, img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=600&q=80" },
+      { id: 5, name: "Pink Lemonade Artesanal", desc: "Suco natural de limão siciliano com infusão de frutas vermelhas e hortelã (400ml).", price: 12.90, oldPrice: null, cat: "Bebidas", tag: null, paused: false, img: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&q=80" },
+      { id: 6, name: "Brownie Belga com Sorvete", desc: "Brownie meio amargo quentinho acompanhado de bola de sorvete de baunilha e calda quente.", price: 22.90, oldPrice: 26.00, cat: "Sobremesas", tag: null, paused: false, img: "https://images.unsplash.com/photo-1564355808539-22fda35bed7e?w=600&q=80" }
+    ];
+
+    const addonsList = [
+      { id: 'a1', name: 'Bacon Extra Crocante', price: 5.00 },
+      { id: 'a2', name: 'Cheddar Cremoso Extra', price: 4.50 },
+      { id: 'a3', name: 'Maionese Verde da Casa', price: 3.00 },
+      { id: 'a4', name: 'Batata Frita Individual', price: 9.90 }
+    ];
+
+    let state = {
+      products: JSON.parse(localStorage.getItem('se_products')) || defaultProducts,
+      cart: JSON.parse(localStorage.getItem('se_cart')) || [],
+      favs: JSON.parse(localStorage.getItem('se_favs')) || [1],
+      orders: JSON.parse(localStorage.getItem('se_orders')) || [],
+      points: Number(localStorage.getItem('se_points') || 150),
+      address: JSON.parse(localStorage.getItem('se_address')) || { region: 'Centro', fee: 5, street: 'Av. Paulista, 1000 - Apto 42' },
+      selectedCat: 'Todos',
+      coupon: null,
+      dark: localStorage.getItem('se_dark') === 'true'
+    };
+
+    let currentModalProduct = null;
+    let pmQty = 1;
+    let pmAddons = {};
+
+    function saveState() {
+      localStorage.setItem('se_products', JSON.stringify(state.products));
+      localStorage.setItem('se_cart', JSON.stringify(state.cart));
+      localStorage.setItem('se_favs', JSON.stringify(state.favs));
+      localStorage.setItem('se_orders', JSON.stringify(state.orders));
+      localStorage.setItem('se_points', state.points);
+      localStorage.setItem('se_address', JSON.stringify(state.address));
+      localStorage.setItem('se_dark', state.dark);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    function formatMoney(v) {
+      return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // ================= 3. TEMA, ENDEREÇO E NAVEGAÇÃO =================
+    if (state.dark) document.body.classList.add('dark');
+    function toggleTheme() {
+      state.dark = !state.dark;
+      document.body.classList.toggle('dark', state.dark);
+      saveState();
+    }
+
+    function updateAddressUI() {
+      document.getElementById('current-address').innerText = `${state.address.region} • Taxa ${formatMoney(state.address.fee)}`;
+    }
+
+    function openAddressModal() {
+      document.getElementById('street-input').value = state.address.street;
+      document.getElementById('address-modal').classList.remove('hidden');
+    }
+
+    function saveAddress() {
+      const [region, fee] = document.getElementById('region-select').value.split('|');
+      const street = document.getElementById('street-input').value.trim();
+      if (!street) return showToast('Informe a rua e número!');
+      state.address = { region, fee: Number(fee), street };
+      saveState();
+      updateAddressUI();
+      closeModal('address-modal');
+      showToast('Endereço atualizado!');
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(`view-${tab}`).classList.add('active');
+      document.getElementById(`nav-${tab}`).classList.add('active');
+      if (tab === 'favs') renderFavs();
+      if (tab === 'orders') renderOrders();
+      if (tab === 'admin') renderAdmin();
+      if (tab === 'loyalty') document.getElementById('loyalty-pts-big').innerText = state.points;
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // ================= 4. CARDÁPIO E PERSONALIZAÇÃO =================
+    function renderCategories() {
+      const cats = ['Todos', 'Burgers', 'Pizzas', 'Bebidas', 'Sobremesas'];
+      document.getElementById('categories-bar').innerHTML = cats.map(c => `
+        <button class="cat-pill ${state.selectedCat === c ? 'active' : ''}" onclick="selectCategory('${c}')">${c}</button>
+      `).join('');
+    }
+
+    function selectCategory(cat) {
+      state.selectedCat = cat;
+      renderCategories();
+      renderMenu();
+    }
+
+    function productCardHTML(p) {
+      const isFav = state.favs.includes(p.id);
+      return `
+        <div class="card ${p.paused ? 'paused' : ''}">
+          ${p.tag ? `<span class="tag-badge">${p.paused ? 'Indisponível' : p.tag}</span>` : ''}
+          <button class="fav-btn" onclick="toggleFav(${p.id})">${isFav ? '❤️' : '🤍'}</button>
+          <img src="${p.img}" class="card-img" alt="${p.name}" loading="lazy">
+          <div class="card-body">
+            <div>
+              <h3 class="card-title">${p.name}</h3>
+              <p class="card-desc">${p.desc}</p>
+            </div>
+            <div class="card-footer">
+              <div class="price-box">
+                ${p.oldPrice ? `<span class="old-price">${formatMoney(p.oldPrice)}</span>` : ''}
+                <span class="price">${formatMoney(p.price)}</span>
+              </div>
+              <button class="add-btn" onclick="openProductModal(${p.id})">+ Escolher</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMenu() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const filtered = state.products.filter(p => {
+        const matchCat = state.selectedCat === 'Todos' || p.cat === state.selectedCat;
+        const matchText = p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query);
+        return matchCat && matchText;
+      });
+      document.getElementById('products-grid').innerHTML = filtered.length
+        ? filtered.map(productCardHTML).join('')
+        : '<p style="color:var(--text-muted);">Nenhum produto encontrado.</p>';
+    }
+
+    function toggleFav(id) {
+      if (state.favs.includes(id)) {
+        state.favs = state.favs.filter(f => f !== id);
+        showToast('Removido dos favoritos');
+      } else {
+        state.favs.push(id);
+        showToast('Salvo nos favoritos ❤️');
+      }
+      saveState();
+      renderMenu();
+      renderFavs();
+    }
+
+    function renderFavs() {
+      const favItems = state.products.filter(p => state.favs.includes(p.id));
+      document.getElementById('favs-grid').innerHTML = favItems.length
+        ? favItems.map(productCardHTML).join('')
+        : '<p style="color:var(--text-muted);">Você ainda não favoritou nenhum item.</p>';
+    }
+
+    function openProductModal(id) {
+      currentModalProduct = state.products.find(p => p.id === id);
+      pmQty = 1;
+      pmAddons = {};
+      document.getElementById('pm-title').innerText = currentModalProduct.name;
+      document.getElementById('pm-desc').innerText = currentModalProduct.desc;
+      document.getElementById('pm-obs').value = '';
+      document.getElementById('pm-qty').innerText = pmQty;
+
+      document.getElementById('pm-addons').innerHTML = addonsList.map(a => `
+        <div class="opt-row">
+          <div>
+            <strong>${a.name}</strong>
+            <small style="display:block; color:var(--success);">+ ${formatMoney(a.price)}</small>
+          </div>
+          <div class="qty-ctrl">
+            <button onclick="changeAddonQty('${a.id}', -1)">-</button>
+            <span id="addon-qty-${a.id}">0</span>
+            <button onclick="changeAddonQty('${a.id}', 1)">+</button>
+          </div>
+        </div>
+      `).join('');
+
+      updatePmTotal();
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function changeAddonQty(id, delta) {
+      const curr = pmAddons[id] || 0;
+      const next = Math.max(0, Math.min(3, curr + delta));
+      pmAddons[id] = next;
+      document.getElementById(`addon-qty-${id}`).innerText = next;
+      updatePmTotal();
+    }
+
+    function changePmQty(delta) {
+      pmQty = Math.max(1, pmQty + delta);
+      document.getElementById('pm-qty').innerText = pmQty;
+      updatePmTotal();
+    }
+
+    function updatePmTotal() {
+      let addonsTotal = 0;
+      for (const [id, qty] of Object.entries(pmAddons)) {
+        const addon = addonsList.find(a => a.id === id);
+        if (addon) addonsTotal += addon.price * qty;
+      }
+      const total = (currentModalProduct.price + addonsTotal) * pmQty;
+      document.getElementById('pm-total').innerText = formatMoney(total);
+    }
+
+    function confirmAddToCart() {
+      const prep = document.querySelector('input[name="pm-prep"]:checked').value;
+      const obs = document.getElementById('pm-obs').value.trim();
+      const chosenAddons = [];
+      let addonsPrice = 0;
+
+      for (const [id, qty] of Object.entries(pmAddons)) {
+        if (qty > 0) {
+          const addon = addonsList.find(a => a.id === id);
+          chosenAddons.push(`${qty}x ${addon.name}`);
+          addonsPrice += addon.price * qty;
+        }
+      }
+
+      state.cart.push({
+        uid: Date.now(),
+        name: currentModalProduct.name,
+        unitPrice: currentModalProduct.price + addonsPrice,
+        qty: pmQty,
+        details: [prep, ...chosenAddons, obs].filter(Boolean).join(' • ')
+      });
+
+      saveState();
+      updateFloatingCart();
+      closeModal('product-modal');
+      showToast('Adicionado à sacola! 🛍️');
+    }
+
+    // ================= 5. SACOLA & CHECKOUT =================
+    function updateFloatingCart() {
+      const bar = document.getElementById('floating-cart');
+      if (!state.cart.length) {
+        bar.classList.add('hidden');
+        return;
+      }
+      bar.classList.remove('hidden');
+      const totalItems = state.cart.reduce((s, i) => s + i.qty, 0);
+      const sub = state.cart.reduce((s, i) => s + (i.unitPrice * i.qty), 0);
+      document.getElementById('float-count').innerText = `${totalItems} ${totalItems === 1 ? 'item' : 'itens'}`;
+      document.getElementById('float-total').innerText = formatMoney(sub);
+    }
+
+    function openCartModal() {
+      renderCart();
+      document.getElementById('cart-modal').classList.remove('hidden');
+    }
+
+    function applyQuickCoupon(code) {
+      state.coupon = code;
+      document.getElementById('coupon-input').value = code;
+      showToast(`Cupom ${code} ativado!`);
+      openCartModal();
+    }
+
+    function applyCouponInput() {
+      const code = document.getElementById('coupon-input').value.trim().toUpperCase();
+      if (code === 'BEMVINDO15' || code === 'FRETEGRATIS') {
+        state.coupon = code;
+        showToast(`Cupom ${code} aplicado!`);
+        renderCart();
+      } else {
+        showToast('Cupom inválido. Tente BEMVINDO15');
+      }
+    }
+
+    function togglePaymentExtra() {
+      const method = document.getElementById('payment-method').value;
+      document.getElementById('pix-box').style.display = method === 'Pix' ? 'block' : 'none';
+      document.getElementById('change-box').style.display = method === 'Dinheiro' ? 'block' : 'none';
+    }
+
+    function copyPix() {
+      navigator.clipboard.writeText('12.345.678/0001-99');
+      showToast('Chave Pix copiada!');
+    }
+
+    function removeCartItem(uid) {
+      state.cart = state.cart.filter(i => i.uid !== uid);
+      saveState();
+      updateFloatingCart();
+      if (!state.cart.length) closeModal('cart-modal');
+      else renderCart();
+    }
+
+    function calculateTotals() {
+      const subtotal = state.cart.reduce((s, i) => s + (i.unitPrice * i.qty), 0);
+      const freeShipGoal = 60;
+      let delivery = subtotal >= freeShipGoal || state.coupon === 'FRETEGRATIS' ? 0 : state.address.fee;
+      let discount = state.coupon === 'BEMVINDO15' ? subtotal * 0.15 : 0;
+
+      const usePts = document.getElementById('use-points-chk')?.checked;
+      let pointsDiscount = 0;
+      if (usePts && state.points >= 100) {
+        pointsDiscount = Math.min(subtotal - discount, Math.floor(state.points / 10));
+      }
+
+      const total = Math.max(0, subtotal + delivery - discount - pointsDiscount);
+      return { subtotal, delivery, discount, pointsDiscount, total, freeShipGoal };
+    }
+
+    function renderCart() {
+      const { subtotal, delivery, discount, pointsDiscount, total, freeShipGoal } = calculateTotals();
+      const pct = Math.min(100, (subtotal / freeShipGoal) * 100);
+      document.getElementById('free-ship-fill').style.width = `${pct}%`;
+      document.getElementById('free-ship-text').innerText = subtotal >= freeShipGoal
+        ? '🎉 Parabéns! Você ganhou Frete Grátis!'
+        : `Faltam ${formatMoney(freeShipGoal - subtotal)} para Frete Grátis`;
+
+      document.getElementById('chk-pts-avail').innerText = state.points;
+      document.getElementById('chk-pts-val').innerText = (Math.floor(state.points / 10)).toFixed(2).replace('.', ',');
+
+      document.getElementById('cart-items-list').innerHTML = state.cart.map(item => `
+        <div class="opt-row">
+          <div>
+            <strong>${item.qty}x ${item.name}</strong>
+            <small style="display:block; color:var(--text-muted);">${item.details}</small>
+            <span style="color:var(--success); font-weight:700;">${formatMoney(item.unitPrice * item.qty)}</span>
+          </div>
+          <button onclick="removeCartItem(${item.uid})" style="background:none; border:none; color:var(--primary); font-weight:700; cursor:pointer;">Remover</button>
+        </div>
+      `).join('');
+
+      document.getElementById('cart-summary').innerHTML = `
+        <div class="summary-row"><span>Subtotal</span><span>${formatMoney(subtotal)}</span></div>
+        <div class="summary-row"><span>Taxa de Entrega (${state.address.region})</span><span>${delivery === 0 ? 'GRÁTIS' : formatMoney(delivery)}</span></div>
+        ${discount > 0 ? `<div class="summary-row" style="color:var(--success);"><span>Cupom (${state.coupon})</span><span>- ${formatMoney(discount)}</span></div>` : ''}
+        ${pointsDiscount > 0 ? `<div class="summary-row" style="color:var(--warning);"><span>Desconto Pontos VIP</span><span>- ${formatMoney(pointsDiscount)}</span></div>` : ''}
+        <div class="summary-total"><span>Total a Pagar</span><span>${formatMoney(total)}</span></div>
+      `;
+    }
+
+    function placeOrder() {
+      const { total, pointsDiscount } = calculateTotals();
+      if (pointsDiscount > 0) state.points -= pointsDiscount * 10;
+      const earned = Math.floor(total);
+      state.points += earned;
+
+      const newOrder = {
+        id: Math.floor(1000 + Math.random() * 9000),
+        date: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        items: [...state.cart],
+        total,
+        address: `${state.address.street} (${state.address.region})`,
+        payment: document.getElementById('payment-method').value,
+        step: 1,
+        rated: false
+      };
+
+      state.orders.unshift(newOrder);
+      state.cart = [];
+      state.coupon = null;
+      saveState();
+      updateFloatingCart();
+      document.getElementById('user-points').innerText = state.points;
+      closeModal('cart-modal');
+      switchTab('orders');
+      showToast(`Pedido #${newOrder.id} confirmado! +${earned} pts`);
+
+      // Simulação automática de avanço do pedido
+      setTimeout(() => advanceOrder(newOrder.id), 6000);
+      setTimeout(() => advanceOrder(newOrder.id), 14000);
+    }
+
+    function advanceOrder(orderId) {
+      const ord = state.orders.find(o => o.id === orderId);
+      if (ord && ord.step < 4) {
+        ord.step++;
+        saveState();
+        renderOrders();
+      }
+    }
+
+    function sendWhatsApp() {
+      const { total } = calculateTotals();
+      const lines = state.cart.map(i => `• ${i.qty}x ${i.name} (${i.details})`).join('%0A');
+      const msg = `*Novo Pedido - SaborExpress*%0A%0A${lines}%0A%0A*Total:* ${formatMoney(total)}%0A*Endereço:* ${state.address.street} - ${state.address.region}%0A*Pagamento:* ${document.getElementById('payment-method').value}`;
+      window.open(`https://wa.me/5511999999999?text=${msg}`, '_blank');
+    }
+
+    // ================= 6. HISTÓRICO & PAINEL LOJISTA =================
+    function rateOrder(id) {
+      const ord = state.orders.find(o => o.id === id);
+      if (ord && !ord.rated) {
+        ord.rated = true;
+        state.points += 30;
+        saveState();
+        document.getElementById('user-points').innerText = state.points;
+        renderOrders();
+        showToast('Obrigado pela avaliação! +30 pontos ⭐');
+      }
+    }
+
+    function renderOrders() {
+      const el = document.getElementById('orders-list');
+      if (!state.orders.length) {
+        el.innerHTML = '<p style="color:var(--text-muted);">Você ainda não realizou nenhum pedido.</p>';
+        return;
+      }
+      el.innerHTML = state.orders.map(o => `
+        <div class="track-card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <strong>Pedido #${o.id} • ${o.date}</strong>
+            <span style="color:var(--success); font-weight:800;">${formatMoney(o.total)}</span>
+          </div>
+          <div class="step-list">
+            <div class="step ${o.step >= 1 ? 'done' : ''}"><div class="step-dot">1</div>Recebido</div>
+            <div class="step ${o.step >= 2 ? 'done' : ''}"><div class="step-dot">2</div>Preparo</div>
+            <div class="step ${o.step >= 3 ? 'done' : ''}"><div class="step-dot">3</div>A Caminho</div>
+            <div class="step ${o.step >= 4 ? 'done' : ''}"><div class="step-dot">4</div>Entregue</div>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">
+            ${o.items.map(i => `${i.qty}x ${i.name}`).join(', ')}<br>
+            📍 ${o.address} • ${o.payment}
+          </p>
+          <div style="display:flex; gap:8px;">
+            ${o.step < 4 ? `<button onclick="advanceOrder(${o.id})" style="background:var(--surface-2); color:var(--text); border:none; padding:8px 12px; border-radius:8px; font-size:12px; cursor:pointer;">Simular Próxima Etapa</button>` : ''}
+            ${!o.rated ? `<button onclick="rateOrder(${o.id})" style="background:var(--warning); color:white; border:none; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">⭐ Avaliar (+30 pts)</button>` : '<span style="font-size:12px; color:var(--success);">⭐ Avaliado</span>'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function adminAddProduct() {
+      const name = document.getElementById('adm-name').value.trim();
+      const desc = document.getElementById('adm-desc').value.trim();
+      const price = parseFloat(document.getElementById('adm-price').value);
+      const cat = document.getElementById('adm-cat').value;
+      if (!name || !price) return showToast('Preencha nome e preço!');
+
+      state.products.unshift({
+        id: Date.now(),
+        name,
+        desc: desc || 'Especialidade da casa.',
+        price,
+        oldPrice: null,
+        cat,
+        tag: 'Novo',
+        paused: false,
+        img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=80'
+      });
+      saveState();
+      renderMenu();
+      renderAdmin();
+      showToast('Produto cadastrado!');
+    }
+
+    function togglePauseProduct(id) {
+      const p = state.products.find(x => x.id === id);
+      if (p) {
+        p.paused = !p.paused;
+        saveState();
+        renderMenu();
+        renderAdmin();
+      }
+    }
+
+    function renderAdmin() {
+      document.getElementById('admin-products-list').innerHTML = state.products.map(p => `
+        <div class="track-card" style="display:flex; justify-content:space-between; align-items:center; padding:12px;">
+          <div>
+            <strong>${p.name}</strong>
+            <small style="display:block; color:var(--text-muted);">${formatMoney(p.price)} • ${p.cat}</small>
+          </div>
+          <button onclick="togglePauseProduct(${p.id})" style="background:${p.paused ? 'var(--success)' : 'var(--primary)'}; color:white; border:none; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">
+            ${p.paused ? 'Ativar' : 'Pausar'}
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // Inicialização
+    document.getElementById('user-points').innerText = state.points;
+    updateAddressUI();
+    renderCategories();
+    renderMenu();
+    updateFloatingCart();
+  </script>
+</body>
+</html>
